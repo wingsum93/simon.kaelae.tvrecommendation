@@ -10,13 +10,8 @@
             android:id="@+id/player_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:focusable="true"/>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="匿名聊天室"
-              android:layout_centerHorizontal="true"
-              android:id="@+id/title"
-              android:layout_centerInParent="true"
-              android:layout_below="@id/player_view"/>
-
 
 
 </RelativeLayout>

@@ -11,18 +11,18 @@ android {
         applicationId "simon.kaelae.tvrecommendation"
         minSdkVersion 17
         targetSdkVersion 29
-        versionCode 15
-        versionName "15"
+        versionCode 16
+        versionName "16"
         buildConfigField("String", "APP_SCHEME", "\"${APP_SCHEME}\"")
         buildConfigField("String", "AUTHORITY", "\"${AUTHORITY}\"")
 
     }
     buildTypes {
         debug {
-            manifestPlaceholders = [domain: 'dev.thematrix.tvhk.dev', scheme: "${APP_SCHEME}"]
+            manifestPlaceholders = [domain: 'simon.kaelae.tvrecommendation', scheme: "${APP_SCHEME}"]
         }
         release {
-            manifestPlaceholders = [domain: 'dev.thematrix.tvhk', scheme: "${APP_SCHEME}"]
+            manifestPlaceholders = [domain: 'simon.kaelae.tvrecommendation', scheme: "${APP_SCHEME}"]
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
