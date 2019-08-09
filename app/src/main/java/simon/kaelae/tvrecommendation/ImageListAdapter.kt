@@ -2,6 +2,7 @@ package simon.kaelae.tvrecommendation
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -59,8 +60,61 @@ internal class ImageListAdapter internal constructor(
         } else {
             holder = convertView.tag as ItemHolder
         }
+        if (position == 8) {
+            val database = FirebaseDatabase.getInstance()
+            database.getReference("fbtitle").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    holder.name!!.text = dataSnapshot.getValue(String::class.java)!!
+                }
 
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+            database.getReference("fbicon").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    try {
+                        Picasso.with(context).load(dataSnapshot.getValue(String::class.java)).into(holder.icon);
+
+                    } catch (e: Exception) {
+                        Picasso.with(context).load("https://i.imgur.com/oKNRcsb.jpg").into(holder.icon);
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+            database.getReference("fbbg").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    convertView.setBackgroundColor(Color.parseColor(dataSnapshot.getValue(String::class.java)))
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
+            holder.name!!.text = this.itemList!![position]
+            val sharedPreference = context.getSharedPreferences("layout", Activity.MODE_PRIVATE)
+            try {
+                Picasso.with(context).load(sharedPreference.getString("logo","")).into(holder.icon);
+            } catch (e: Exception) {
+                Picasso.with(context).load("https://i.imgur.com/XQnIwzp.png").into(holder.icon);
+            }}
+
+
+            if (position > 8) {
+
+            holder.name!!.text = this.itemList!![position]
+            val sharedPreference = context.getSharedPreferences("layout", Activity.MODE_PRIVATE)
+            try {
+                Picasso.with(context).load(sharedPreference.getString("logo","")).into(holder.icon);
+            } catch (e: Exception) {
+                Picasso.with(context).load("https://i.imgur.com/XQnIwzp.png").into(holder.icon);
+            }
+
+
+        }
         if (position > 8) {
+
 
             holder.name!!.text = this.itemList!![position]
             val sharedPreference = context.getSharedPreferences("layout", Activity.MODE_PRIVATE)

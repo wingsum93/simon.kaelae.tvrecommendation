@@ -18,13 +18,20 @@ import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
+import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.phone_layout.*
 import simon.kaelae.tvrecommendation.recommendation.DefaultChannelRecommendationJobService
 import simon.kaelae.tvrecommendation.recommendation.PROGRAM_QUERY
+import java.security.KeyManagementException
+import java.security.NoSuchAlgorithmException
+import javax.net.ssl.SSLContext
 
 
 class MainActivity : Activity() {
@@ -33,6 +40,8 @@ class MainActivity : Activity() {
     var Cloud_ver = BuildConfig.VERSION_CODE
 
     var fblink = Uri.parse("https://www.facebook.com/androidtvhk")
+    var fbtitle = "AndroidTV 教室\n "
+
     var title = mutableListOf(
         "ViuTV\n ",
         "now新聞台\n ",
@@ -51,6 +60,7 @@ class MainActivity : Activity() {
         val database = FirebaseDatabase.getInstance()
         val sharedPreference = getSharedPreferences("layout", Context.MODE_PRIVATE)
         sharedPreference.getString("layout", "")
+        setUpSSL()
         if (isTV() || sharedPreference.getString("layout", "") == "TV") {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             setTheme(R.style.AppTheme)
@@ -170,6 +180,16 @@ class MainActivity : Activity() {
             override fun onCancelled(error: DatabaseError) {
             }
         })
+
+//        database.getReference("fbtitle").addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                fbtitle = dataSnapshot.getValue(String::class.java)!!
+//                title[8]=fbtitle
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//            }
+//        })
         val setting = findViewById<Button>(R.id.setting)
         setting.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -236,6 +256,27 @@ class MainActivity : Activity() {
         editor.apply()
         recreate();
     }
+    private fun setUpSSL() {
+        try {
+            ProviderInstaller.installIfNeeded(applicationContext)
+            var sslContext: SSLContext? = null
+            sslContext = SSLContext.getInstance("TLSv1.2")
+            try {
+                sslContext!!.init(null, null, null)
+                val engine = sslContext.createSSLEngine()
+                engine.enabledCipherSuites
 
+                //Toast.makeText(this, "強制使用 TLSv1.2", Toast.LENGTH_SHORT).show()
+            } catch (e: KeyManagementException) {
+                //Toast.makeText(this, "強制使用 TLSv1.2 失敗", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: NoSuchAlgorithmException) {
+            //Toast.makeText(this, "系統沒有 TLSv1.2", Toast.LENGTH_SHORT).show()
+        } catch (e: GooglePlayServicesNotAvailableException) {
+            //Toast.makeText(this, "系統沒有 Google Play Service", Toast.LENGTH_SHORT).show()
+        } catch (e: GooglePlayServicesRepairableException) {
+            //Toast.makeText(this, "Google Play Service 錯誤", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 }

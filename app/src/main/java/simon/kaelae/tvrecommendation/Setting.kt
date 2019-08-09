@@ -1,19 +1,27 @@
 package simon.kaelae.tvrecommendation
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.FileProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import simon.kaelae.tvrecommendation.recommendation.DefaultChannelRecommendationJobService
+import java.io.File
 
 
 class Setting : Activity() {
@@ -23,6 +31,7 @@ class Setting : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settinglistview)
+        ctx = this
         var switch = "切換界面"
         val sharedPreference = getSharedPreferences("layout", MODE_PRIVATE)
         var editor = sharedPreference.edit()
@@ -163,6 +172,7 @@ class Setting : Activity() {
                         dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.GONE
                         setTitle("有更新可用-UPDATE-")
                         setPositiveButton("下載更新") { _, _ ->
+
                             val openURL = Intent(android.content.Intent.ACTION_VIEW)
                             openURL.data = dllink
                             try {
@@ -214,5 +224,48 @@ class Setting : Activity() {
             }
         }
     }
+    private fun downloadUpdate() {
+        registerReceiver(onDownloadComplete(), IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
+        val request = DownloadManager
+            .Request(Uri.parse("https://thematrix.dev/tvhk/app-release.apk"))
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "tvhk.apk")
+
+        downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        downloadId = downloadManager.enqueue(request)
+    }
+
+    private class onDownloadComplete: BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val c = downloadManager.query(DownloadManager.Query().setFilterById(downloadId))
+            if(c != null){
+                c.moveToFirst()
+                val fileUri = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+                val mFile = File(Uri.parse(fileUri).path!!)
+                val fileName = mFile.absolutePath
+
+                context.unregisterReceiver(this)
+
+                val intent = Intent(Intent.ACTION_VIEW)
+                var contentUri: Uri
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(fileName))
+
+                }else{
+                    contentUri = Uri.fromFile(File(fileName))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+
+                intent.setDataAndType(contentUri, "application/vnd.android.package-archive")
+                startActivity(ctx, intent, null)
+            }
+        }
+    }
+    companion object {
+        lateinit var ctx: Context
+        private lateinit var downloadManager: DownloadManager
+        private var downloadId: Long = -1
+    }
 }

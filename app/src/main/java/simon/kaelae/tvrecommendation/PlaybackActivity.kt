@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Rational
 import android.view.KeyEvent
 import android.view.SurfaceView
 import android.view.View
@@ -43,6 +44,7 @@ class PlaybackActivity : FragmentActivity() {
 
     private fun isTV(): Boolean {
         return packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+
     }
 
     override fun onUserLeaveHint() {
@@ -55,6 +57,7 @@ class PlaybackActivity : FragmentActivity() {
             } else {
                 try {
                     val params = PictureInPictureParams.Builder()
+
                         .build()
                     enterPictureInPictureMode(params)
                 } catch (e: Exception) {
@@ -71,6 +74,7 @@ class PlaybackActivity : FragmentActivity() {
         newConfig: Configuration
     ) {
         if (isInPictureInPictureMode) {
+
             // Hide the full-screen UI (controls, etc.) while in picture-in-picture mode.
         } else {
             // Restore the full-screen UI.
@@ -102,13 +106,6 @@ class PlaybackActivity : FragmentActivity() {
         // If called while in PIP mode, do not pause playback
         if (android.os.Build.VERSION.SDK_INT > 23) {
             if (isInPictureInPictureMode) {
-                // Continue playback
-                //Toast.makeText(this, "onpause", Toast.LENGTH_LONG).show()
-//                supportFragmentManager
-//                    .beginTransaction()
-//                    .replace(android.R.id.content, PlaybackVideoFragment())
-//                    .commit()
-
             } else {
 
             }
