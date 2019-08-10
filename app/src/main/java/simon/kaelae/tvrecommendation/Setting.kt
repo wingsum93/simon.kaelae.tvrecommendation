@@ -132,11 +132,14 @@ class Setting : Activity() {
                     dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.VISIBLE
                     dialogView.findViewById<EditText>(R.id.name).visibility = View.GONE
                     dialogView.findViewById<EditText>(R.id.url).visibility = View.GONE
-                    if (sharedPreference.getString("player", "originalplayer") == "originalplayer") {
+                    if (sharedPreference.getString("player", "exoplayer") == "originalplayer") {
                         dialogView.findViewById<RadioButton>(R.id.originalplayer).isChecked = true
                     }
-                    if (sharedPreference.getString("player", "originalplayer") == "selfplayer") {
+                    if (sharedPreference.getString("player", "exoplayer") == "selfplayer") {
                         dialogView.findViewById<RadioButton>(R.id.selfplayer).isChecked = true
+                    }
+                    if (sharedPreference.getString("player", "exoplayer") == "exoplayer") {
+                        dialogView.findViewById<RadioButton>(R.id.exolplayer).isChecked = true
                     }
                     setView(dialogView)
                     setTitle("自定播放器")
@@ -149,6 +152,11 @@ class Setting : Activity() {
                         if (dialogView.findViewById<RadioButton>(R.id.selfplayer).isChecked) {
                             var editor = sharedPreference.edit()
                             editor.putString("player", "selfplayer")
+                            editor.apply()
+                        }
+                        if (dialogView.findViewById<RadioButton>(R.id.exolplayer).isChecked) {
+                            var editor = sharedPreference.edit()
+                            editor.putString("player", "exoplayer")
                             editor.apply()
                         }
                         val intent = Intent(this@Setting, MainActivity::class.java)

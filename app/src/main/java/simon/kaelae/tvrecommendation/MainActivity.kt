@@ -91,12 +91,13 @@ class MainActivity : Activity() {
 
 
             gridview.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
+
                 if (position == 8) {
                     val openURL = Intent(android.content.Intent.ACTION_VIEW)
                     openURL.data = fblink
                     startActivity(openURL)
                 }
-                if (position > 8) {
+                else if (position > 8) {
 
                     val intent = Intent(this, PlaybackActivity::class.java)
                     val movie = Movie(

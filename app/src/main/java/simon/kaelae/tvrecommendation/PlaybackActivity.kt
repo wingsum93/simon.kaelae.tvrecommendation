@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Rational
 import android.view.KeyEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 
@@ -25,10 +25,20 @@ class PlaybackActivity : FragmentActivity() {
 
         //id = intent.getIntExtra("id",0)
         //Toast.makeText(this, channe_id.toString(), Toast.LENGTH_LONG).show()
-        supportFragmentManager
-            .beginTransaction()
-            .replace(android.R.id.content, PlaybackVideoFragment())
-            .commitAllowingStateLoss()
+        val sharedPreference = getSharedPreferences("layout", Context.MODE_PRIVATE)
+        if (sharedPreference.getString("player", "exoplayer") == "originalplayer") {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(android.R.id.content, PlaybackVideoFragment())
+                .commitAllowingStateLoss()
+        }
+        else {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(android.R.id.content, PlaybackVideoExoFragment())
+                .commitAllowingStateLoss()
+        }
+
 
         val decorView = window.decorView
         decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -51,14 +61,15 @@ class PlaybackActivity : FragmentActivity() {
         val sharedPreference = getSharedPreferences("layout", Context.MODE_PRIVATE)
 
 
-        if (sharedPreference.getString("player", "originalplayer") == "originalplayer") {
+        if (sharedPreference.getString("player", "exoplayer") == "originalplayer"||sharedPreference.getString("player", "exoplayer") == "exoplayer") {
             if (isTV() || android.os.Build.VERSION.SDK_INT <= 25) {
-                Toast.makeText(this, "no PIP", Toast.LENGTH_LONG).show()
+                //Toast.makeText(this, "no PIP support", Toast.LENGTH_LONG).show()
             } else {
                 try {
                     val params = PictureInPictureParams.Builder()
 
                         .build()
+                    //Toast.makeText(this, "PIP triggred", Toast.LENGTH_LONG).show()
                     enterPictureInPictureMode(params)
                 } catch (e: Exception) {
                     Toast.makeText(this, "Picture-in-picture mode error", Toast.LENGTH_LONG).show()
@@ -191,7 +202,7 @@ class PlaybackActivity : FragmentActivity() {
         if (event.action == KeyEvent.ACTION_UP) {
             //Toast.makeText(this, direction, Toast.LENGTH_LONG).show()
 
-            PlaybackVideoFragment().channelSwitch(direction, true)
+            PlaybackVideoExoFragment().channelSwitch(direction, true)
         }
 
         return true

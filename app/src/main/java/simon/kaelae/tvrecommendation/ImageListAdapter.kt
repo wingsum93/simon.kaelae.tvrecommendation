@@ -6,8 +6,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
@@ -95,23 +93,10 @@ internal class ImageListAdapter internal constructor(
             holder.name!!.text = this.itemList!![position]
             val sharedPreference = context.getSharedPreferences("layout", Activity.MODE_PRIVATE)
             try {
-                Picasso.with(context).load(sharedPreference.getString("logo","")).into(holder.icon);
-            } catch (e: Exception) {
-                Picasso.with(context).load("https://i.imgur.com/XQnIwzp.png").into(holder.icon);
-            }}
-
-
-            if (position > 8) {
-
-            holder.name!!.text = this.itemList!![position]
-            val sharedPreference = context.getSharedPreferences("layout", Activity.MODE_PRIVATE)
-            try {
-                Picasso.with(context).load(sharedPreference.getString("logo","")).into(holder.icon);
+                Picasso.with(context).load(sharedPreference.getString("logo", "")).into(holder.icon);
             } catch (e: Exception) {
                 Picasso.with(context).load("https://i.imgur.com/XQnIwzp.png").into(holder.icon);
             }
-
-
         }
         if (position > 8) {
 
@@ -119,7 +104,7 @@ internal class ImageListAdapter internal constructor(
             holder.name!!.text = this.itemList!![position]
             val sharedPreference = context.getSharedPreferences("layout", Activity.MODE_PRIVATE)
             try {
-                Picasso.with(context).load(sharedPreference.getString("logo","")).into(holder.icon);
+                Picasso.with(context).load(sharedPreference.getString("logo", "")).into(holder.icon);
             } catch (e: Exception) {
                 Picasso.with(context).load("https://i.imgur.com/XQnIwzp.png").into(holder.icon);
             }
@@ -135,6 +120,8 @@ internal class ImageListAdapter internal constructor(
             }
         }
         return convertView
+
+
     }
 
     internal class ItemHolder {

@@ -25,8 +25,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/playerchoiceradiogroup">
+
         <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
-                     android:id="@+id/originalplayer" android:text="內置播放器 : 電視建議使用\n電視支援轉台。手機Android 8.0+支援Picture-in-Picture。無廣告"/>
+                     android:id="@+id/exolplayer" android:text="內置Exoplayer : 電視建議使用\n電視支援轉台。手機Android 8.0+支援Picture-in-Picture。無廣告"/>
+        <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
+                     android:id="@+id/originalplayer" android:text="內置原生播放器 : 電視建議使用\n電視支援轉台。手機Android 8.0+支援Picture-in-Picture。無廣告"/>
 
         <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
                      android:id="@+id/selfplayer" android:text="自選播放器 : 手機建議使用(建議安裝MxPlayer)\n用自選播放器會失去轉台功能。Mx Player也有Picture-in-Picture功能。部分自選播放器有機會有廣告)"/>
