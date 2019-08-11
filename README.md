@@ -1,8 +1,3 @@
 # simon.kaelae.tvrecommendation
-Fork Version from 
-https://github.com/y2kbug-hk/dev.thematrix.tvhk
-
-with Picture-in-picture support(android 8.0)
-with Android TV support (AndroidTV Channel on AndroidTV 8.0+)
-
-I hope anyone with knowledge of Google Cast SDK could help.......
+I hope anyone with knowledge of Google Cast could help.......
+睇唔明 https://android.jlelse.eu/sending-media-to-chromecast-has-never-been-easier-c331eeef1e0a
