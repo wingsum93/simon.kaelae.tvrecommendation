@@ -1,3 +1,3 @@
 # simon.kaelae.tvrecommendation
 I hope anyone with knowledge of Google Cast could help.......
-睇唔明 https://android.jlelse.eu/sending-media-to-chromecast-has-never-been-easier-c331eeef1e0a
+Reference: https://android.jlelse.eu/sending-media-to-chromecast-has-never-been-easier-c331eeef1e0a
