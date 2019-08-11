@@ -1,5 +1,6 @@
 package simon.kaelae.tvrecommendation
 
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -7,16 +8,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.leanback.app.VideoSupportFragment
-import androidx.leanback.app.VideoSupportFragmentGlueHost
-import androidx.leanback.media.MediaPlayerAdapter
-import androidx.leanback.media.PlaybackTransportControlGlue
-import androidx.leanback.widget.PlaybackControlsRow
+import androidx.mediarouter.app.MediaRouteButton
 import com.android.volley.*
 import com.android.volley.toolbox.*
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -27,6 +23,10 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
+import com.google.android.gms.cast.framework.CastStateListener
 import kotlinx.android.synthetic.main.activity_exo.view.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -35,18 +35,44 @@ import org.json.JSONObject
 class PlaybackVideoExoFragment : Fragment() {
 
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.activity_exo, container,
-            false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        getContext()!!.getTheme().applyStyle(R.style.mytheme, true);
+        val view: View = inflater.inflate(
+            R.layout.activity_exo, container,
+            false
+        )
 
         val (id, title, _, _, videoUrl, func) = activity?.intent?.getSerializableExtra(DetailsActivity.MOVIE) as Movie
-
         setUpPlayer(view)
         setUpNetwork()
-
         prepareVideo(id, title, videoUrl, func)
+
+        val mMediaRouteButton = view.findViewById<MediaRouteButton>(R.id.media_route_button);
+        CastButtonFactory.setUpMediaRouteButton(context, mMediaRouteButton);
+        try {
+            val mCastContext = CastContext.getSharedInstance(context!!);
+            if (mCastContext.getCastState() != CastState.NO_DEVICES_AVAILABLE) {
+                mMediaRouteButton.setVisibility(View.VISIBLE);
+            }
+
+
+            mCastContext.addCastStateListener(object : CastStateListener {
+                override fun onCastStateChanged(state: Int) {
+                    if (state == CastState.NO_DEVICES_AVAILABLE)
+                        mMediaRouteButton.setVisibility(View.GONE);
+                    else {
+                        if (mMediaRouteButton.getVisibility() == View.GONE)
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            })
+        } catch (e: java.lang.Exception) {
+        }
 
         return view
     }
@@ -62,7 +88,7 @@ class PlaybackVideoExoFragment : Fragment() {
         player.release()
     }
 
-    private fun setUpPlayer(view: View){
+    private fun setUpPlayer(view: View) {
         // setup track selector
         val bandwithMeter = DefaultBandwidthMeter()
         val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwithMeter)
@@ -83,13 +109,13 @@ class PlaybackVideoExoFragment : Fragment() {
         toast = Toast.makeText(context, "", Toast.LENGTH_LONG)
     }
 
-    private fun setUpNetwork(){
+    private fun setUpNetwork() {
         requestQueue = RequestQueue(NoCache(), BasicNetwork(HurlStack())).apply {
             start()
         }
     }
 
-    fun channelSwitch(direction: String, showMessage: Boolean){
+    fun channelSwitch(direction: String, showMessage: Boolean) {
         lastDirection = direction
 
         val list = MovieList.list
@@ -97,22 +123,22 @@ class PlaybackVideoExoFragment : Fragment() {
 
         var videoId = currentVideoID
 
-        if(direction.equals("PREVIOUS")){
+        if (direction.equals("PREVIOUS")) {
             videoId--
-        }else if(direction.equals("NEXT")) {
+        } else if (direction.equals("NEXT")) {
             videoId++
         }
 
         val channelCount = list.count()
-        if(videoId < 0){
+        if (videoId < 0) {
             videoId = channelCount - 1
-        }else if(videoId >= channelCount){
+        } else if (videoId >= channelCount) {
             videoId = 0
         }
 
         val item = list[videoId]
 
-        if(showMessage){
+        if (showMessage) {
             toast.setText("正在轉台到 " + item.title)
             toast.show()
         }
@@ -120,13 +146,13 @@ class PlaybackVideoExoFragment : Fragment() {
         prepareVideo(item.id, item.title, item.videoUrl, item.func)
     }
 
-    fun prepareVideo(id: Int, title: String, videoUrl: String, func: String){
+    fun prepareVideo(id: Int, title: String, videoUrl: String, func: String) {
 
         currentVideoID = id
 
-        if(videoUrl.equals("")){
+        if (videoUrl.equals("")) {
             getVideoUrl(title, func)
-        }else{
+        } else {
             playVideo(title, videoUrl)
         }
 
@@ -142,13 +168,14 @@ class PlaybackVideoExoFragment : Fragment() {
             var myClip: ClipData = ClipData.newPlainText("note_copy", videoUrl)
             myClipboard.setPrimaryClip(myClip)
             //Toast.makeText(context, "已複製播放網址到剪貼簿", Toast.LENGTH_SHORT).show()
-        }catch (e: java.lang.Exception){}
+        } catch (e: java.lang.Exception) {
+        }
         val sharedPreference = activity?.getSharedPreferences("layout", Context.MODE_PRIVATE)
         if (sharedPreference?.getString("player", "exoplayer") == "exoplayer") {
             val mediaUri = Uri.parse(videoUrl)
             val mediaSource = hlsMediaSourceFactory.createMediaSource(mediaUri)
             player.prepare(mediaSource)
-        }else{
+        } else {
 
 
             try {
@@ -156,12 +183,13 @@ class PlaybackVideoExoFragment : Fragment() {
                     Intent(Intent.ACTION_VIEW, uri)
                 }
                 startActivity(playIntent)
-            }catch (e: java.lang.Exception){
+            } catch (e: java.lang.Exception) {
                 //Toast.makeText(context?.applicationContext,"沒有播放器，建議安裝Mx Player，改用內置播放器",Toast.LENGTH_SHORT).show()
                 val mediaUri = Uri.parse(videoUrl)
                 val mediaSource = hlsMediaSourceFactory.createMediaSource(mediaUri)
                 player.prepare(mediaSource)
-            }}
+            }
+        }
     }
 
     private fun getVideoUrl(title: String, ch: String) {
@@ -169,22 +197,22 @@ class PlaybackVideoExoFragment : Fragment() {
 
         lateinit var url: String
 
-        if(ch.equals("viutv99") || ch.equals("nowtv332") || ch.equals("nowtv331")){
+        if (ch.equals("viutv99") || ch.equals("nowtv332") || ch.equals("nowtv331")) {
             val params = JSONObject()
 
-            if(ch.equals("viutv99")){
+            if (ch.equals("viutv99")) {
                 url = "https://api.viu.now.com/p8/2/getLiveURL"
 
                 params.put("channelno", "099")
 
                 params.put("deviceId", "AndroidTV")
                 params.put("deviceType", "5")
-            }else{
+            } else {
                 url = "https://hkt-mobile-api.nowtv.now.com/09/1/getLiveURL"
 
-                if(ch.equals("nowtv332")){
+                if (ch.equals("nowtv332")) {
                     params.put("channelno", "332")
-                }else if(ch.equals("nowtv331")){
+                } else if (ch.equals("nowtv331")) {
                     params.put("channelno", "331")
                 }
 
@@ -201,43 +229,56 @@ class PlaybackVideoExoFragment : Fragment() {
                 params,
                 Response.Listener { response ->
                     try {
-                        url = JSONArray(JSONObject(JSONObject(response.get("asset").toString()).get("hls").toString()).get("adaptive").toString()).get(0).toString()
+                        url = JSONArray(
+                            JSONObject(JSONObject(response.get("asset").toString()).get("hls").toString()).get("adaptive").toString()
+                        ).get(0).toString()
                         playVideo(title, url)
-                    }catch (exception: Exception){
+                    } catch (exception: Exception) {
                         showPlaybackErrorMessage(title)
                     }
                 },
-                Response.ErrorListener{ error ->
+                Response.ErrorListener { error ->
                     showPlaybackErrorMessage(title)
                 }
             )
 
-            jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+            jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            )
 
             requestQueue.add(jsonObjectRequest)
-        }else if(ch.equals("cabletv109") || ch.equals("cabletv110")){
+        } else if (ch.equals("cabletv109") || ch.equals("cabletv110")) {
             url = "https://mobileapp.i-cable.com/iCableMobile/API/api.php"
 
-            val stringRequest = object: StringRequest(
+            val stringRequest = object : StringRequest(
                 Method.POST,
                 url,
                 Response.Listener { response ->
                     try {
-                        playVideo(title, JSONObject(JSONObject(response).get("result").toString()).get("stream").toString())
-                    }catch (exception: Exception){
+                        playVideo(
+                            title,
+                            JSONObject(JSONObject(response).get("result").toString()).get("stream").toString()
+                        )
+                    } catch (exception: Exception) {
                         showPlaybackErrorMessage(title)
                     }
                 },
-                Response.ErrorListener{ error ->
+                Response.ErrorListener { error ->
                     showPlaybackErrorMessage(title)
                 }
-            ){
+            ) {
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return DefaultRetryPolicy(
+                        DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5,
+                        0,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                    )
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
-                    val params =  mutableMapOf<String, String>()
+                    val params = mutableMapOf<String, String>()
 
                     params.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 6.0.1; AndroidTV Build/35.0.A.1.282)")
 
@@ -245,12 +286,12 @@ class PlaybackVideoExoFragment : Fragment() {
                 }
 
                 override fun getParams(): MutableMap<String, String> {
-                    val params =  mutableMapOf<String, String>()
+                    val params = mutableMapOf<String, String>()
 
-                    if(ch.equals("cabletv109")){
+                    if (ch.equals("cabletv109")) {
                         params.put("channel_no", "_9")
                         params.put("vlink", "_9")
-                    }else if(ch.equals("cabletv110")){
+                    } else if (ch.equals("cabletv110")) {
                         params.put("channel_no", "_10")
                         params.put("vlink", "_10")
                     }
@@ -281,7 +322,7 @@ class PlaybackVideoExoFragment : Fragment() {
     }
 
 
-    private fun showPlaybackErrorMessage(title: String){
+    private fun showPlaybackErrorMessage(title: String) {
         toast.setText(title + " 暫時未能播放，請稍候再試。")
         toast.show()
         channelSwitch(lastDirection, false)
