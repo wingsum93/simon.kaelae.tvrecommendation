@@ -25,6 +25,8 @@ internal class ImageListAdapter internal constructor(
         Uri.parse("http://i.imgur.com/xTtwwzS.jpg"),
         Uri.parse("http://i.imgur.com/ucm7n4h.jpg"),
         Uri.parse("http://i.imgur.com/dydKNhm.jpg"),
+
+        Uri.parse("https://i.imgur.com/HfISddg.jpg"),
         Uri.parse("http://i.imgur.com/a2yFl08.jpg"),
         Uri.parse("http://i.imgur.com/a7rFbnX.png"),
         Uri.parse("http://i.imgur.com/ManpvmP.png"),
@@ -41,13 +43,14 @@ internal class ImageListAdapter internal constructor(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
-
+        val database = FirebaseDatabase.getInstance()
         val holder: ItemHolder
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(resource, null)
             holder = ItemHolder()
             holder.name = convertView!!.findViewById(R.id.textView)
             holder.icon = convertView.findViewById(R.id.icon)
+
 
             try {
                 Picasso.with(context).load(cardImageUrl[position]).into(holder.icon);
@@ -58,8 +61,8 @@ internal class ImageListAdapter internal constructor(
         } else {
             holder = convertView.tag as ItemHolder
         }
-        if (position == 8) {
-            val database = FirebaseDatabase.getInstance()
+        if (position == 9) {
+
             database.getReference("fbtitle").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     holder.name!!.text = dataSnapshot.getValue(String::class.java)!!
@@ -98,7 +101,7 @@ internal class ImageListAdapter internal constructor(
                 Picasso.with(context).load("https://i.imgur.com/XQnIwzp.png").into(holder.icon);
             }
         }
-        if (position > 8) {
+        if (position > 9) {
 
 
             holder.name!!.text = this.itemList!![position]
@@ -111,6 +114,18 @@ internal class ImageListAdapter internal constructor(
 
 
         } else {
+            val title = arrayOf(
+                "ViuTV",
+                "now新聞台",
+                "now直播台",
+                "now 630台",
+                "香港開電視",
+                "有線新聞台",
+                "有線直播台",
+                "港台電視31",
+                "港台電視32"
+            )
+
 
             holder.name!!.text = this.itemList!![position]
             try {

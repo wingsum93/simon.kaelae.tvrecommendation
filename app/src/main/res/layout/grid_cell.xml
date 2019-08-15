@@ -23,5 +23,6 @@
             android:padding="@dimen/txv_padding"
             android:textColor="@android:color/black"/>
 
+
 </LinearLayout>
 

@@ -43,15 +43,16 @@ class MainActivity : Activity() {
     var fbtitle = "AndroidTV 教室\n "
 
     var title = mutableListOf(
-        "ViuTV\n ",
-        "now新聞台\n ",
-        "now直播台\n ",
-        "香港開電視\n ",
-        "有線新聞台\n ",
-        "有線直播台\n ",
-        "港台電視31\n ",
-        "港台電視32\n ",
-        "AndroidTV 教室\n "
+        "ViuTV",
+        "now新聞台",
+        "now直播台",
+        "now 630台",
+        "香港開電視",
+        "有線新聞台",
+        "有線直播台",
+        "港台電視31",
+        "港台電視32",
+        "AndroidTV 教室"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +82,7 @@ class MainActivity : Activity() {
                 for (i in 0 until sharedPreference.getString("name", "")!!.split(",").size) {
                     title.add(sharedPreference.getString("name", "")!!.split(",")[i])
                 }
-                title.removeAt(9)
+                title.removeAt(10)
 
 
             }
@@ -92,20 +93,20 @@ class MainActivity : Activity() {
 
             gridview.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
 
-                if (position == 8) {
+                if (position == 9) {
                     val openURL = Intent(android.content.Intent.ACTION_VIEW)
                     openURL.data = fblink
                     startActivity(openURL)
                 }
-                else if (position > 8) {
+                else if (position > 9) {
 
                     val intent = Intent(this, PlaybackActivity::class.java)
                     val movie = Movie(
                         id.toInt(),
-                        title = sharedPreference.getString("name", "")!!.split(",")[position - 8],
+                        title = sharedPreference.getString("name", "")!!.split(",")[position - 9],
                         description = "",
                         cardImageUrl = "",
-                        videoUrl = sharedPreference.getString("url", "")!!.split(",")[position - 8],
+                        videoUrl = sharedPreference.getString("url", "")!!.split(",")[position - 9],
                         func = ""
                     )
                     intent.putExtra(DetailsActivity.MOVIE, movie)
@@ -120,7 +121,7 @@ class MainActivity : Activity() {
 
             gridview.setOnItemLongClickListener(OnItemLongClickListener { arg0, arg1, position, arg3 ->
 
-                if (position > 8) {
+                if (position > 9) {
                     //Toast.makeText(this@MainActivity,sharedPreference.getString("url", "")!!.split(",")[position-8],Toast.LENGTH_SHORT).show()
 
                     lateinit var dialog: AlertDialog
@@ -129,7 +130,7 @@ class MainActivity : Activity() {
 
                     val dialogClickListener = DialogInterface.OnClickListener { _, which ->
                         when (which) {
-                            DialogInterface.BUTTON_POSITIVE -> removeSharePreference(position - 8)
+                            DialogInterface.BUTTON_POSITIVE -> removeSharePreference(position - 9)
                         }
                     }
                     builder.setPositiveButton("YES", dialogClickListener)
@@ -216,7 +217,7 @@ class MainActivity : Activity() {
         val sharedPreference = getSharedPreferences("layout", Context.MODE_PRIVATE)
         val id: String? = intent.data?.getQueryParameter(PROGRAM_QUERY)
         id ?: return
-        if (id.toInt() < 8) {
+        if (id.toInt() < 9) {
             //Toast.makeText(this@MainActivity,id.toInt().toString(),Toast.LENGTH_SHORT).show()
             val movie = MovieList.list.find { it.id == id.toInt() }
             val intent = Intent(this, PlaybackActivity::class.java)
@@ -228,10 +229,10 @@ class MainActivity : Activity() {
             val intent = Intent(this, PlaybackActivity::class.java)
             val movie = Movie(
                 id.toInt(),
-                title = sharedPreference.getString("name", "")!!.split(",")[id.toInt() - 7],
+                title = sharedPreference.getString("name", "")!!.split(",")[id.toInt() - 8],
                 description = "",
                 cardImageUrl = "",
-                videoUrl = sharedPreference.getString("url", "")!!.split(",")[id.toInt() - 7],
+                videoUrl = sharedPreference.getString("url", "")!!.split(",")[id.toInt() - 8],
                 func = ""
             )
             intent.putExtra(DetailsActivity.MOVIE, movie)

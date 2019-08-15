@@ -34,6 +34,8 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -52,12 +54,21 @@
         <activity android:name="simon.kaelae.tvrecommendation.TVshowlist"/>
         <activity android:name="simon.kaelae.tvrecommendation.Setting"/>
         <activity android:name="simon.kaelae.tvrecommendation.PlaybackActivity"
-
+                  android:windowSoftInputMode="adjustResize|stateHidden"
                   android:resizeableActivity="true"
                   android:supportsPictureInPicture="true"
                   android:configChanges=
                           "screenSize|smallestScreenSize|screenLayout|orientation"/>
+        <activity
+                android:name="simon.kaelae.tvrecommendation.FakeLauncherActivity"
+                android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <receiver android:name="simon.kaelae.tvrecommendation.recommendation.RecommendationBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.media.tv.action.INITIALIZE_PROGRAMS"/>

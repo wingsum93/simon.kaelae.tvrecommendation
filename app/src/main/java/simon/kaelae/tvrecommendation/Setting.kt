@@ -2,26 +2,20 @@ package simon.kaelae.tvrecommendation
 
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.FileProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import simon.kaelae.tvrecommendation.recommendation.DefaultChannelRecommendationJobService
-import java.io.File
 
 
 class Setting : Activity() {
@@ -58,7 +52,8 @@ class Setting : Activity() {
         } else {//phone
             switch = "切換成TV版界面"
         }
-        var newlist = mutableListOf<String>(switch, "自定頻道", "選擇播放器", "檢查更新","重置設定")
+        var newlist = mutableListOf<String>(switch, "自定頻道", "選擇播放器", "檢查更新", "重置設定", "免責聲明", "聊天設定", "重選Home Launcher")
+
 
 
         val lvAdapter = ArrayAdapter<String>(
@@ -83,20 +78,24 @@ class Setting : Activity() {
             if (i == 1) {
                 val dia = AlertDialog.Builder(this@Setting, R.style.Theme_AppCompat).apply {
                     val dialogView = this@Setting.layoutInflater.inflate(R.layout.dialog_new_category, null)
+                    dialogView.findViewById<TextView>(R.id.statement).visibility = View.GONE
+                    dialogView.findViewById<TextView>(R.id.name_hint).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.name_edittext).visibility = View.GONE
+                    dialogView.findViewById<RadioGroup>(R.id.chatradiogroup).visibility = View.GONE
                     dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.GONE
-                     setView(dialogView)
+                    setView(dialogView)
                     setTitle("新增影片來源")
                     setMessage("輸入名稱及影片網址")
                     setPositiveButton("Save") { _, _ ->
                         val theURL = dialogView.findViewById<EditText>(R.id.url).text.toString().replace(" ", "")
                         val theName = dialogView.findViewById<EditText>(R.id.name).text.toString()
-                        if (theURL == ""||theName == "") {
-                            Toast.makeText(this@Setting, "儲存不成功:名稱或網址不可留空", Toast.LENGTH_SHORT).show()
+                        if (theURL == "" || theName == "") {
+                            Toast.makeText(this@Setting, "儲存失敗:名稱或網址不可留空", Toast.LENGTH_SHORT).show()
 
-                        } else if(theURL.split(",").size != theName.split(",").size){
-                            Toast.makeText(this@Setting, "儲存不成功:名稱及網址數量不相稱", Toast.LENGTH_SHORT).show()
+                        } else if (theURL.split(",").size != theName.split(",").size) {
+                            Toast.makeText(this@Setting, "儲存失敗:名稱及網址數量不相稱", Toast.LENGTH_SHORT).show()
 
-                        }else{
+                        } else {
                             val sharedPreference = getSharedPreferences("layout", Context.MODE_PRIVATE)
                             var editor = sharedPreference.edit()
                             val original_name = sharedPreference.getString("name", "")
@@ -130,6 +129,10 @@ class Setting : Activity() {
                     val dialogView = this@Setting.layoutInflater.inflate(R.layout.dialog_new_category, null)
 
                     dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.VISIBLE
+                    dialogView.findViewById<TextView>(R.id.name_hint).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.name_edittext).visibility = View.GONE
+                    dialogView.findViewById<RadioGroup>(R.id.chatradiogroup).visibility = View.GONE
+                    dialogView.findViewById<TextView>(R.id.statement).visibility = View.GONE
                     dialogView.findViewById<EditText>(R.id.name).visibility = View.GONE
                     dialogView.findViewById<EditText>(R.id.url).visibility = View.GONE
                     if (sharedPreference.getString("player", "exoplayer") == "originalplayer") {
@@ -175,6 +178,10 @@ class Setting : Activity() {
                         val dialogView = this@Setting.layoutInflater.inflate(R.layout.dialog_new_category, null)
 
                         setView(dialogView)
+                        dialogView.findViewById<TextView>(R.id.name_hint).visibility = View.GONE
+                        dialogView.findViewById<EditText>(R.id.name_edittext).visibility = View.GONE
+                        dialogView.findViewById<RadioGroup>(R.id.chatradiogroup).visibility = View.GONE
+                        dialogView.findViewById<TextView>(R.id.statement).visibility = View.GONE
                         dialogView.findViewById<EditText>(R.id.name).visibility = View.GONE
                         dialogView.findViewById<EditText>(R.id.url).visibility = View.GONE
                         dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.GONE
@@ -213,6 +220,10 @@ class Setting : Activity() {
                     val dialogView = this@Setting.layoutInflater.inflate(R.layout.dialog_new_category, null)
 
                     setView(dialogView)
+                    dialogView.findViewById<TextView>(R.id.name_hint).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.name_edittext).visibility = View.GONE
+                    dialogView.findViewById<RadioGroup>(R.id.chatradiogroup).visibility = View.GONE
+                    dialogView.findViewById<TextView>(R.id.statement).visibility = View.GONE
                     dialogView.findViewById<EditText>(R.id.name).visibility = View.GONE
                     dialogView.findViewById<EditText>(R.id.url).visibility = View.GONE
                     dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.GONE
@@ -230,47 +241,98 @@ class Setting : Activity() {
                 }.create().show()
 
             }
-        }
-    }
-    private fun downloadUpdate() {
-        registerReceiver(onDownloadComplete(), IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+            if (i == 5) {
+                AlertDialog.Builder(this@Setting, R.style.Theme_AppCompat).apply {
+                    val dialogView = this@Setting.layoutInflater.inflate(R.layout.dialog_new_category, null)
 
-        val request = DownloadManager
-            .Request(Uri.parse("https://thematrix.dev/tvhk/app-release.apk"))
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "tvhk.apk")
+                    setTitle("免債聲明:本應用程式只供教學用途\n開源碼載於 http://bit.ly/2KKbmpp")
+                    dialogView.findViewById<TextView>(R.id.name_hint).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.name_edittext).visibility = View.GONE
+                    dialogView.findViewById<RadioGroup>(R.id.chatradiogroup).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.name).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.url).visibility = View.GONE
+                    dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.GONE
 
-        downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadId = downloadManager.enqueue(request)
-    }
+                    setPositiveButton("確定") { _, _ ->
+                    }
 
-    private class onDownloadComplete: BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val c = downloadManager.query(DownloadManager.Query().setFilterById(downloadId))
-            if(c != null){
-                c.moveToFirst()
-                val fileUri = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-                val mFile = File(Uri.parse(fileUri).path!!)
-                val fileName = mFile.absolutePath
+                }.create().show()
+            }
+            if (i == 6) {
+                AlertDialog.Builder(this@Setting, R.style.Theme_AppCompat).apply {
+                    val dialogView = this@Setting.layoutInflater.inflate(R.layout.dialog_new_category, null)
 
-                context.unregisterReceiver(this)
+                    dialogView.findViewById<RadioGroup>(R.id.playerchoiceradiogroup).visibility = View.GONE
+                    dialogView.findViewById<TextView>(R.id.name_hint).visibility = View.VISIBLE
+                    dialogView.findViewById<EditText>(R.id.name_edittext).visibility = View.VISIBLE
+                    dialogView.findViewById<RadioGroup>(R.id.chatradiogroup).visibility = View.VISIBLE
+                    dialogView.findViewById<TextView>(R.id.statement).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.name).visibility = View.GONE
+                    dialogView.findViewById<EditText>(R.id.url).visibility = View.GONE
+                    if (sharedPreference.getString("chatenabled", "true") == "true") {
+                        dialogView.findViewById<RadioButton>(R.id.enablechat).isChecked = true
+                    }
+                    if (sharedPreference.getString("chatenabled", "true") == "false") {
+                        dialogView.findViewById<RadioButton>(R.id.disablechat).isChecked = true
+                    }
 
-                val intent = Intent(Intent.ACTION_VIEW)
-                var contentUri: Uri
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    contentUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(fileName))
+                    dialogView.findViewById<EditText>(R.id.name_edittext)
+                        .setText(sharedPreference.getString("chat_name", "").toString())
+                    setView(dialogView)
+                    setTitle("聊天設定")
+                    setPositiveButton("Save") { _, _ ->
+                        if (dialogView.findViewById<RadioButton>(R.id.enablechat).isChecked) {
+                            var editor = sharedPreference.edit()
+                            editor.putString(
+                                "chat_name",
+                                dialogView.findViewById<EditText>(R.id.name_edittext).text.toString()
+                            )
+                            editor.putString("chatenabled", "true")
+                            editor.apply()
 
-                }else{
-                    contentUri = Uri.fromFile(File(fileName))
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+                        }
+                        if (dialogView.findViewById<RadioButton>(R.id.disablechat).isChecked) {
+                            var editor = sharedPreference.edit()
+                            editor.putString("chatenabled", "false")
+                            editor.apply()
+                        }
 
-                intent.setDataAndType(contentUri, "application/vnd.android.package-archive")
-                startActivity(ctx, intent, null)
+                        val intent = Intent(this@Setting, MainActivity::class.java)
+                        startActivity(intent)
+                    }
+
+                    setNegativeButton("Cancel") { _, _ ->
+                        //pass
+                    }
+                }.create().show()
+            }
+            if (i == 7) {
+                resetPreferredLauncherAndOpenChooser(ctx)
             }
         }
     }
+
+    fun resetPreferredLauncherAndOpenChooser(context: Context) {
+        val packageManager = context.packageManager
+        val componentName = ComponentName(context, simon.kaelae.tvrecommendation.FakeLauncherActivity::class.java!!)
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+
+        val selector = Intent(Intent.ACTION_MAIN)
+        selector.addCategory(Intent.CATEGORY_HOME)
+        selector.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(selector)
+
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+            PackageManager.DONT_KILL_APP
+        )
+    }
+
     companion object {
         lateinit var ctx: Context
         private lateinit var downloadManager: DownloadManager

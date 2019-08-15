@@ -23,16 +23,41 @@
             android:inputType="textMultiLine"/>
     <RadioGroup
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/playerchoiceradiogroup">
 
         <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
-                     android:id="@+id/exolplayer" android:text="內置Exoplayer : 電視建議使用\n電視支援轉台。手機Android 8.0+支援Picture-in-Picture。無廣告"/>
-        <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
-                     android:id="@+id/originalplayer" android:text="內置原生播放器 : 電視建議使用\n電視支援轉台。手機Android 8.0+支援Picture-in-Picture。無廣告"/>
-
+                     android:id="@+id/exolplayer" android:text="內置Exoplayer : 電視建議使用\n電視支援轉台。手機Android 8.0+支援Picture-in-Picture\n無廣告。支援Google Cast。有聊天室功能"/>
         <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
                      android:id="@+id/selfplayer" android:text="自選播放器 : 手機建議使用(建議安裝MxPlayer)\n用自選播放器會失去轉台功能。Mx Player也有Picture-in-Picture功能。部分自選播放器有機會有廣告)"/>
+        <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
+                     android:id="@+id/originalplayer" android:text="內置原生播放器(很多BUG，已停止開發，不建議使用) "/>
 
     </RadioGroup>
+
+    <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chatradiogroup">
+
+        <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
+                     android:id="@+id/enablechat" android:text="啟用聊天室功能(僅限Exoplay及垂直介面時)"/>
+        <RadioButton android:padding="8sp" android:layout_width="match_parent" android:layout_height="wrap_content"
+                     android:id="@+id/disablechat" android:text="關閉聊天室功能"/>
+
+
+    </RadioGroup>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="設定聊天室花名" android:id="@+id/name_hint"/>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="輸入花名" android:id="@+id/name_edittext"/>
+
+
+    <TextView
+            android:id="@+id/statement"
+            android:layout_margin="8sp"
+            android:textColor="#FFFFFF"
+            android:layout_width="match_parent"
+            android:layout_height="220sp"
+            android:textSize="16sp"
+            android:autoLink="all"
+            android:text="本應用程式只供教學用途，開源碼載於 https://github.com/simonho1989/simon.kaelae.tvrecommendation"/>
 </LinearLayout>

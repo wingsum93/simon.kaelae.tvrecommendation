@@ -24,6 +24,7 @@ object MovieList {
             "ViuTV",
             "now新聞台",
             "now直播台",
+            "now 630台",
             "香港開電視",
             "有線新聞台",
             "有線直播台",
@@ -37,7 +38,8 @@ object MovieList {
             "",
             "",
             "",
-            "Old format video that scale made not fit screen",
+            "Only allow IP Address in HK",
+            "Only allow IP Address in HK",
             "",
             ""
         )
@@ -46,6 +48,7 @@ object MovieList {
             "http://i.imgur.com/xTtwwzS.jpg",
             "http://i.imgur.com/ucm7n4h.jpg",
             "http://i.imgur.com/dydKNhm.jpg",
+            "https://i.imgur.com/HfISddg.jpg",
             "http://i.imgur.com/a2yFl08.jpg",
             "http://i.imgur.com/a7rFbnX.png",
             "http://i.imgur.com/ManpvmP.png",
@@ -54,6 +57,7 @@ object MovieList {
         )
 
         val videoUrl = arrayOf(
+            "",
             "",
             "",
             "",
@@ -68,6 +72,7 @@ object MovieList {
             "viutv99",
             "nowtv332",
             "nowtv331",
+            "nowtv630",
             "",
             "cabletv109",
             "cabletv110",

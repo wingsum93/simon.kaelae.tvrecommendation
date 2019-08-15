@@ -77,20 +77,21 @@ class DefaultChannelRecommendationJobService : JobService() {
         val sharedPreference = getSharedPreferences("layout", Activity.MODE_PRIVATE)
         if (sharedPreference.getString("name", "") == "") {
             newOrderList.add(MovieList.list[1])
-            newOrderList.add(MovieList.list[4])
-            newOrderList.add(MovieList.list[2])
             newOrderList.add(MovieList.list[5])
+            newOrderList.add(MovieList.list[2])
             newOrderList.add(MovieList.list[6])
-            newOrderList.add(MovieList.list[7])
-            newOrderList.add(MovieList.list[0])
             newOrderList.add(MovieList.list[3])
+            newOrderList.add(MovieList.list[7])
+            newOrderList.add(MovieList.list[8])
+            newOrderList.add(MovieList.list[0])
+            newOrderList.add(MovieList.list[4])
         } else {
 
             for (i in 0 until sharedPreference.getString("name", "")!!.split(",").size) {
 
                 newOrderList.add(
                     Movie(
-                        id = i+7,
+                        id = i+8,
                         title = sharedPreference.getString("name", "")!!.split(",")[i],
                         description = "",
                         cardImageUrl = "https://i.imgur.com/XQnIwzp.png",
@@ -100,13 +101,14 @@ class DefaultChannelRecommendationJobService : JobService() {
                 )
             }
             newOrderList.add(MovieList.list[1])
-            newOrderList.add(MovieList.list[4])
-            newOrderList.add(MovieList.list[2])
             newOrderList.add(MovieList.list[5])
+            newOrderList.add(MovieList.list[2])
             newOrderList.add(MovieList.list[6])
-            newOrderList.add(MovieList.list[7])
-            newOrderList.add(MovieList.list[0])
             newOrderList.add(MovieList.list[3])
+            newOrderList.add(MovieList.list[7])
+            newOrderList.add(MovieList.list[8])
+            newOrderList.add(MovieList.list[0])
+            newOrderList.add(MovieList.list[4])
         }
         val programs = createPrograms(defaultChannelId, newOrderList)
         deleteAllPrograms(contentResolver)

@@ -45,12 +45,13 @@ class MainFragment : BrowseFragment() {
 
         listRowAdapter.add(MovieList.list[1])
         listRowAdapter.add(MovieList.list[2])
+        listRowAdapter.add(MovieList.list[3])
         listRowAdapter.add(MovieList.list[0])
-        listRowAdapter2.add(MovieList.list[4])
         listRowAdapter2.add(MovieList.list[5])
-        listRowAdapter2.add(MovieList.list[3])
-        listRowAdapter3.add(MovieList.list[6])
+        listRowAdapter2.add(MovieList.list[6])
+        listRowAdapter2.add(MovieList.list[4])
         listRowAdapter3.add(MovieList.list[7])
+        listRowAdapter3.add(MovieList.list[8])
 
 
         val header = HeaderItem(0, "PCCW")
@@ -61,7 +62,7 @@ class MainFragment : BrowseFragment() {
         if(sharedPreference?.getString("name", "")!!.split(",").size >1){
             val listRowAdapter4 = ArrayObjectAdapter(cardPresenter)
             for (i in  0 until sharedPreference?.getString("name", "")!!.split(",").size) {
-                listRowAdapter4.add(Movie(id= 9,
+                listRowAdapter4.add(Movie(id= 10,
                     title = sharedPreference?.getString("name", "")!!.split(",")[i],description="",cardImageUrl="https://i.imgur.com/XQnIwzp.png",
                     videoUrl= sharedPreference?.getString("url", "")!!.split(",")[i],func=""))
             }

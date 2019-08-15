@@ -7,6 +7,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="30sp"
             android:layout_marginBottom="30sp"
+            android:textColor="#FFFFFF"
             android:text="設定"
             android:id="@+id/setting"/>
 
