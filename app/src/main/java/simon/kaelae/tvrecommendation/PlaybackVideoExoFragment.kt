@@ -150,8 +150,8 @@ class PlaybackVideoExoFragment : Fragment() {
                     message.setText("")
                     message.setHint("可以留言啦")
                 } else {
-                    //if (sharedPreference.getString("chat_name", "") != "" && sharedPreference.getString("chat_name","")!!.contains("admin") == false && message.text.toString() != "") {
-                        if (sharedPreference.getString("chat_name", "") != "" && message.text.toString() != "") {
+                    if (sharedPreference.getString("chat_name", "") != "" && sharedPreference.getString("chat_name","")!!.contains("admin") == false && message.text.toString() != "") {
+                        //if (sharedPreference.getString("chat_name", "") != "" && message.text.toString() != "") {
                         send.visibility = View.GONE
                         val key = commentsReference.push().getKey()!!
                         val value = HashMap<String, Any?>();
