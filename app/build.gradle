@@ -11,8 +11,8 @@ android {
         applicationId "simon.kaelae.tvrecommendation"
         minSdkVersion 17
         targetSdkVersion 29
-        versionCode 19
-        versionName "19"
+        versionCode 20
+        versionName "20"
         buildConfigField("String", "APP_SCHEME", "\"${APP_SCHEME}\"")
         buildConfigField("String", "AUTHORITY", "\"${AUTHORITY}\"")
         multiDexEnabled true

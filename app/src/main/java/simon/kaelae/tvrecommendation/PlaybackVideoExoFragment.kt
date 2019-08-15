@@ -2,8 +2,6 @@ package simon.kaelae.tvrecommendation
 
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -27,14 +25,12 @@ import com.android.volley.toolbox.*
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
@@ -99,7 +95,7 @@ class PlaybackVideoExoFragment : Fragment() {
             linearlayout.visibility = View.VISIBLE
             message.visibility = View.VISIBLE
             send.visibility = View.VISIBLE
-        }else{
+        } else {
             linearlayout.visibility = View.GONE
             message.visibility = View.GONE
             send.visibility = View.GONE
@@ -120,7 +116,7 @@ class PlaybackVideoExoFragment : Fragment() {
             send.visibility = View.GONE
         }
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             linearlayout.visibility = View.GONE
             message.visibility = View.GONE
             send.visibility = View.GONE
@@ -154,7 +150,8 @@ class PlaybackVideoExoFragment : Fragment() {
                     message.setText("")
                     message.setHint("可以留言啦")
                 } else {
-                    if (sharedPreference.getString("chat_name", "") != "" && sharedPreference.getString("chat_name", "")!!.contains("admin") == false && message.text.toString() != "") {
+                    //if (sharedPreference.getString("chat_name", "") != "" && sharedPreference.getString("chat_name","")!!.contains("admin") == false && message.text.toString() != "") {
+                        if (sharedPreference.getString("chat_name", "") != "" && message.text.toString() != "") {
                         send.visibility = View.GONE
                         val key = commentsReference.push().getKey()!!
                         val value = HashMap<String, Any?>();
@@ -186,6 +183,7 @@ class PlaybackVideoExoFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         player.release()
+
     }
 
 
@@ -577,9 +575,9 @@ class PlaybackVideoExoFragment : Fragment() {
 
         override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
             holder.bind(comments[position])
-            if(position % 2 ==1){
+            if (position % 2 == 1) {
                 holder.itemView.setBackgroundColor(Color.parseColor("#455a64"))
-            } else{
+            } else {
                 holder.itemView.setBackgroundColor(Color.parseColor("#263238"))
             }
         }
@@ -599,21 +597,10 @@ class PlaybackVideoExoFragment : Fragment() {
             val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
             movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
             val mediaInfo = MediaInfo.Builder(url)
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setContentType(MimeTypes.APPLICATION_M3U8)
                 .setMetadata(movieMetadata).build();
             val castPlayer = CastPlayer(mCastContext);
-            val castSessionAvailabilityListener = object : SessionAvailabilityListener {
-                override fun onCastSessionAvailable() {
-                    castPlayer.loadItem(MediaQueueItem.Builder(mediaInfo).build(), 0)
-                    activity?.finish()
-                }
+            castPlayer.loadItem(MediaQueueItem.Builder(mediaInfo).build(), 0)
 
-                override fun onCastSessionUnavailable() {
-                    castPlayer.stop()
-                }
-            }
-            castPlayer.setSessionAvailabilityListener(castSessionAvailabilityListener)
         } catch (e: java.lang.Exception) {
         }
     }
