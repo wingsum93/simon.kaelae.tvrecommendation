@@ -18,6 +18,13 @@ import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.PlaybackControlsRow
 import com.android.volley.*
 import com.android.volley.toolbox.*
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
+import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.framework.CastContext
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -250,6 +257,51 @@ class PlaybackVideoFragment : VideoSupportFragment() {
             }
 
             requestQueue.add(stringRequest)
+        }
+        else if (ch.equals("nowtv630")) {
+            url = "https://sports.now.com/VideoCheckOut/?pid=webch630_4&service=NOW360&type=channel"
+            val queue = Volley.newRequestQueue(context)
+            val stringRequest = StringRequest(Request.Method.GET, url,
+                Response.Listener<String> { response ->
+
+                    playVideo(
+                        title,
+                        response.substringBeforeLast("html5streamurlhq").substringAfterLast("html5streamurlhq").substringBeforeLast(
+                            "]"
+                        ).substringBeforeLast("]").substringAfterLast("[")
+                    )
+                    try{
+                        val mCastContext = CastContext.getSharedInstance(context!!);
+                        val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+                        movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
+                        val mediaInfo =
+                            MediaInfo.Builder(
+                                response.substringBeforeLast("html5streamurlhq").substringAfterLast("html5streamurlhq").substringBeforeLast(
+                                    "]"
+                                ).substringBeforeLast("]").substringAfterLast("[")
+                            )
+                                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                                .setContentType(MimeTypes.APPLICATION_M3U8)
+                                .setMetadata(movieMetadata).build();
+                        val castPlayer = CastPlayer(mCastContext);
+                        val castSessionAvailabilityListener = object : SessionAvailabilityListener {
+                            override fun onCastSessionAvailable() {
+                                if (castPlayer != null) {
+                                    castPlayer.loadItem(MediaQueueItem.Builder(mediaInfo).build(), 0)
+                                    activity?.finish()
+                                }
+                            }
+
+                            override fun onCastSessionUnavailable() {
+
+                            }
+                        }
+                        castPlayer.setSessionAvailabilityListener(castSessionAvailabilityListener)
+                    }catch (e: java.lang.Exception){}
+                },
+                Response.ErrorListener { })
+            queue.add(stringRequest)
+
         }
     }
 

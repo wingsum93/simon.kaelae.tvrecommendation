@@ -11,8 +11,8 @@ android {
         applicationId "simon.kaelae.tvrecommendation"
         minSdkVersion 17
         targetSdkVersion 29
-        versionCode 18
-        versionName "18"
+        versionCode 19
+        versionName "19"
         buildConfigField("String", "APP_SCHEME", "\"${APP_SCHEME}\"")
         buildConfigField("String", "AUTHORITY", "\"${AUTHORITY}\"")
         multiDexEnabled true
@@ -41,7 +41,7 @@ dependencies {
     implementation 'androidx.tvprovider:tvprovider:1.0.0'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
-    implementation 'com.google.android.gms:play-services-safetynet:17.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
